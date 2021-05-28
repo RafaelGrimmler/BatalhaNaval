@@ -8,8 +8,13 @@ package guerranaval;
 import java.awt.event.*;
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 
 public class GuerraNaval extends JFrame implements ActionListener{
+    //BOTÕES PRINCIPAIS
+    JButton sair, dica, disparoUnico, cascataHorizontal, cascataVertical, tiroEstrela;
+    JPanel painelBotoesCima, painelMapas, painelMapaEsquerda, painelMapaDireita;
+    Container tela;
     
     public GuerraNaval(){
         super("Guerra Naval");
@@ -18,18 +23,37 @@ public class GuerraNaval extends JFrame implements ActionListener{
     }
     
     public void iniciarTelaPrincipal(){
-        Container tela = getContentPane();
+        tela = getContentPane();
         tela.setLayout(new BorderLayout(8, 6));
         
-        JPanel painelBotoesCima = new JPanel(); // CRIAÇÃO DO PAINEL DE CIMA
+        painelBotoesCima = new JPanel(); // CRIAÇÃO DO PAINEL DE CIMA
         painelBotoesCima.setLayout(new FlowLayout());
         
-        JButton sair = new JButton("Sair");
-        JButton dica = new JButton("Dica");
-        JButton disparoUnico = new JButton("Disparo Unico");
-        JButton cascataHorizontal = new JButton("Cascata Horizontal");
-        JButton cascataVertical = new JButton("Cascata Vertical");
-        JButton tiroEstrela = new JButton("Tiro Estrela");
+        painelMapas = new JPanel();        
+        painelMapaEsquerda = new JPanel();
+        painelMapaDireita = new JPanel();
+        
+        painelMapas.setLayout(new GridLayout(0, 2));
+        painelMapaEsquerda.setBackground(Color.red);
+        painelMapaDireita.setBackground(Color.BLUE);
+        
+        painelMapas.add(painelMapaEsquerda);
+        painelMapas.add(painelMapaDireita);
+              
+        // BOTÕES DO PAINEL DE CIMA
+        sair = new JButton("Sair");
+        sair.setBackground(Color.WHITE);
+        dica = new JButton("Dica");
+        dica.setBackground(Color.WHITE);
+        disparoUnico = new JButton("Disparo Unico");
+        disparoUnico.setBackground(Color.DARK_GRAY);
+        disparoUnico.setForeground(Color.WHITE);
+        cascataHorizontal = new JButton("Cascata Horizontal");
+        cascataHorizontal.setBackground(Color.WHITE);
+        cascataVertical = new JButton("Cascata Vertical");
+        cascataVertical.setBackground(Color.WHITE);
+        tiroEstrela = new JButton("Tiro Estrela");
+        tiroEstrela.setBackground(Color.WHITE);
         // ATRIBUI UM COMANDO AOS BOTÕES
         sair.setActionCommand("P.sair");
         dica.setActionCommand("P.dica");
@@ -52,6 +76,7 @@ public class GuerraNaval extends JFrame implements ActionListener{
         painelBotoesCima.add(cascataVertical);
         painelBotoesCima.add(tiroEstrela);
         tela.add(painelBotoesCima, BorderLayout.NORTH);
+        tela.add(painelMapas);
         
         setSize(800, 600);
         setVisible(true);
@@ -67,7 +92,36 @@ public class GuerraNaval extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         String comando = e.getActionCommand();
         if( comando.contains("P.") ){
-            System.out.println("Aloo");
+            // TODA VEZ QUE ACONTECER UMA AÇÃO NOS BOTOES REDEFINE A COR
+            dica.setBackground(Color.WHITE);
+            dica.setForeground(Color.BLACK);
+            disparoUnico.setBackground(Color.WHITE);
+            disparoUnico.setForeground(Color.BLACK);
+            cascataHorizontal.setBackground(Color.WHITE);
+            cascataHorizontal.setForeground(Color.BLACK);
+            cascataVertical.setBackground(Color.WHITE);
+            cascataVertical.setForeground(Color.BLACK);
+            tiroEstrela.setBackground(Color.WHITE);
+            tiroEstrela.setForeground(Color.BLACK);
+            //-------------------------------
+            if( "P.sair".equals(comando) ){
+                System.exit(0);          
+            }else if( "P.dica".equals(comando) ){
+                dica.setBackground(Color.DARK_GRAY);
+                dica.setForeground(Color.WHITE);
+            }else if( "P.disparounico".equals(comando) ){
+                disparoUnico.setBackground(Color.DARK_GRAY);
+                disparoUnico.setForeground(Color.WHITE);
+            }else if( "P.cascatahorizontal".equals(comando) ){
+                cascataHorizontal.setBackground(Color.DARK_GRAY);
+                cascataHorizontal.setForeground(Color.WHITE);
+            }else if( "P.cascatavertical".equals(comando) ){
+                cascataVertical.setBackground(Color.DARK_GRAY);
+                cascataVertical.setForeground(Color.WHITE);
+            }else if( "P.tiroestrela".equals(comando) ){
+                tiroEstrela.setBackground(Color.DARK_GRAY);
+                tiroEstrela.setForeground(Color.WHITE);
+            }
         }
     }
     

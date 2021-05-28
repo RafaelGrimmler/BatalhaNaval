@@ -8,7 +8,7 @@ package guerranaval;
 import java.awt.event.*;
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.border.LineBorder;
+//import javax.swing.border.LineBorder;
 
 public class menuPrincipal extends JFrame implements ActionListener{
     
@@ -30,14 +30,12 @@ public class menuPrincipal extends JFrame implements ActionListener{
         painelBotoesMenu.add(painelBaixo);
         
         ImageIcon img = new ImageIcon("barco.png");
+        ImageIcon img1 = new ImageIcon("podio.png");
+        ImageIcon img2 = new ImageIcon("exit.png");
         
         JButton jogar = new JButton(img);
-        JButton ranking = new JButton("Ranking");
-        ranking.setBackground(Color.WHITE);
-        ranking.setBorderPainted(false);
-        JButton sair = new JButton("Sair");
-        sair.setBackground(Color.WHITE);
-        sair.setBorderPainted(false);
+        JButton ranking = new JButton(img1);
+        JButton sair = new JButton(img2);
         
         jogar.setActionCommand("jogar");
         ranking.setActionCommand("ranking");
@@ -67,6 +65,11 @@ public class menuPrincipal extends JFrame implements ActionListener{
             telaprincipal.setVisible(true);
             dispose();
             telaprincipal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
+        }
+        else{
+            if( "sair".equals(comando) ){
+                System.exit(0);
+            }
         }
     }
     
