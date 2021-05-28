@@ -8,6 +8,7 @@ package guerranaval;
 import java.awt.event.*;
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 
 public class menuPrincipal extends JFrame implements ActionListener{
     
@@ -22,12 +23,21 @@ public class menuPrincipal extends JFrame implements ActionListener{
         painelBotoesMenu.setLayout(new GridLayout(2, 0));
         painelBaixo.setLayout(new GridLayout(3, 0));
         
+        painelCima.setLayout(new BorderLayout());
+        painelCima.add(new imagemMenu());
+        
         painelBotoesMenu.add(painelCima);
         painelBotoesMenu.add(painelBaixo);
         
-        JButton jogar = new JButton("Jogar");
+        ImageIcon img = new ImageIcon("barco.png");
+        
+        JButton jogar = new JButton(img);
         JButton ranking = new JButton("Ranking");
+        ranking.setBackground(Color.WHITE);
+        ranking.setBorderPainted(false);
         JButton sair = new JButton("Sair");
+        sair.setBackground(Color.WHITE);
+        sair.setBorderPainted(false);
         
         jogar.setActionCommand("jogar");
         ranking.setActionCommand("ranking");
