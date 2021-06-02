@@ -12,9 +12,10 @@ import javax.swing.*;
 
 public class menuPrincipal extends JFrame implements ActionListener{
     
+    Container telamenu = getContentPane();
+    
     public menuPrincipal(){
         super("Guerra Naval");
-        Container tela = getContentPane();
         
         JPanel painelBotoesMenu = new JPanel();
         JPanel painelCima = new JPanel();
@@ -48,7 +49,7 @@ public class menuPrincipal extends JFrame implements ActionListener{
         painelBaixo.add(jogar);
         painelBaixo.add(ranking);
         painelBaixo.add(sair);
-        tela.add(painelBotoesMenu);
+        telamenu.add(painelBotoesMenu);
         
         
         setSize(800, 600);
@@ -61,10 +62,11 @@ public class menuPrincipal extends JFrame implements ActionListener{
         String comando = e.getActionCommand();
         
         if( "jogar".equals(comando) ){
-            GuerraNaval telaprincipal = new GuerraNaval();
+            GuerraNaval telaprincipal = new GuerraNaval(0, "rafael");
             telaprincipal.setVisible(true);
-            dispose();
             telaprincipal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
+            telamenu.setVisible(false);
+            this.dispose();
         }
         else{
             if( "sair".equals(comando) ){

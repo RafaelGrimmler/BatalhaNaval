@@ -8,6 +8,13 @@ package guerranaval;
 import java.awt.event.*;
 import java.awt.*;
 import javax.swing.*;
+import java.util.Random;
+
+import veiculos.Caca;
+import veiculos.NaviodeEscolta;
+import veiculos.PortaAviao;
+import veiculos.Submarino;
+
 
 public final class GuerraNaval extends JFrame implements ActionListener{
     //BOTÕES PRINCIPAIS
@@ -18,12 +25,23 @@ public final class GuerraNaval extends JFrame implements ActionListener{
     public JButton[][] botaoMapaEsquerda = new JButton[10][10]; 
     public JButton[][] botaoMapaDireita = new JButton[10][10]; 
     //VARIAVEIS
-    public String tipoDisparo = "disparounico";
+    private String tipoDisparo = "disparounico";
+    private final String nomeJogador;
+    private final int tipoJogo; // SE == 0, JOGO ALEATORIO  --- --- SE == 1, JOGO DEFINIDO
+    // VEICULOS
+    private Caca cacaPlayer, cacaComputador;
+    private NaviodeEscolta navioescoltaPlayer, navioescoltaComputador;
+    private PortaAviao portaaviaoPlayer, portaaviaoComputador;
+    private Submarino submarinoPlayer, submarinoComputador;
     
-    public GuerraNaval(){
+    
+    public GuerraNaval(int tipoJogo, String nomeJogador){
         super("Guerra Naval");
+        this.nomeJogador = nomeJogador;
+        this.tipoJogo = tipoJogo;
         // Inicializa tela
         iniciarTelaPrincipal();
+        botarVeiculos();        
     }
     
     public void iniciarTelaPrincipal(){
@@ -136,6 +154,8 @@ public final class GuerraNaval extends JFrame implements ActionListener{
         JLabel [] letras = new JLabel[10];
         String letra;
         char c = 'A';
+        String comando;
+        int contadorComando = 0;
         if( "esquerda".equals(opcao) ){
             for( int i = 0; i < 11; i++ ){
                 if( i == 0 )
@@ -144,9 +164,6 @@ public final class GuerraNaval extends JFrame implements ActionListener{
                     numeros[i] = new JLabel("  " + i);
                 painelMapaEsquerda.add(numeros[i]);
             }
-            ImageIcon img1 = new ImageIcon("icones/navioescolta1abatido.png");
-            ImageIcon img2 = new ImageIcon("icones/navioescolta2abatido.png");
-            ImageIcon img3 = new ImageIcon("icones/navioescolta3abatido.png");
             for( int i = 0; i < 10; i++ ){
                 letra = "" + c++;
                 letras[i] = new JLabel(letra);
@@ -154,21 +171,14 @@ public final class GuerraNaval extends JFrame implements ActionListener{
                 for( int j = 0; j < 10; j++ ){
                     botaoMapaEsquerda[i][j] = new JButton();
                     botaoMapaEsquerda[i][j].setBackground(personalizadaEsq);
-                    if( j >= 0 && j <= 2 ){
-                        if( j == 0 )
-                            botaoMapaEsquerda[i][j].setIcon(img1);
-                        if( j == 1 )
-                            botaoMapaEsquerda[i][j].setIcon(img2);
-                        if( j == 2 )
-                            botaoMapaEsquerda[i][j].setIcon(img3);
-                    }
+                    //comando = "" + contadorComando++;
+                    //botaoMapaEsquerda[i][j].setActionCommand(comando);
+                    botaoMapaEsquerda[i][j].addActionListener(this);
                     painelMapaEsquerda.add(botaoMapaEsquerda[i][j]);
                 }
             }
         }
         else{
-            String comando;
-            int contadorComando = 0;
             for( int i = 0; i < 11; i++ ){
                 if( i == 0 )
                     numeros[i] = new JLabel("  ");
@@ -229,7 +239,7 @@ public final class GuerraNaval extends JFrame implements ActionListener{
         painelBotoesCima.add(cascataVertical);
         painelBotoesCima.add(tiroEstrela);
     }
-    
+        
     @Override
     public void actionPerformed(ActionEvent e) {
         String comando = e.getActionCommand();
@@ -332,8 +342,254 @@ public final class GuerraNaval extends JFrame implements ActionListener{
         tiroEstrela.setForeground(Color.BLACK);
     }
     
-     public static void main(String[] args) {
+    // --------- POEM VEICULOS EM CAMPO NA PRIMEIRA ITERAÇÃO
+    
+    public void botarVeiculos(){
+        if(tipoJogo == 0){
+            int veiculo = 0; // veiculo = 0 ( caça ) // veiculo == 1 (Navio escolta) // veiculo == 2 (porta aviao) // veiculo == 3 ( Submarino)
+            while(veiculo < 4){ // Seta veiculos do lado esquerdo(jogador)
+                if(veiculo == 0){
+                    adicionarCacas(true);
+                    adicionarCacas(false);
+                    veiculo++;
+                }else{
+                    if(veiculo == 1){
+                        adicionarEscoltas(true);
+                        adicionarEscoltas(false);
+                        veiculo++;
+                    }else{
+                        if(veiculo == 2){
+                            adicionaPortaAvioes(true);
+                            adicionaPortaAvioes(false);
+                            veiculo++;
+                        }else{
+                            adicionaSubmarinos(true);
+                            adicionaSubmarinos(false);
+                            veiculo++;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    public void adicionarCacas(boolean jogador){
+        int posx, posy;
+        Random rand = new Random();
+        posx = rand.nextInt(10);
+        while(true){
+            posy = rand.nextInt(10);
+            if( posy < 9 )
+                break;
+        }
+        ImageIcon img1 = new ImageIcon("icones/aviao1.png");
+        ImageIcon img2 = new ImageIcon("icones/aviao2.png");
+        if(jogador){
+            cacaPlayer = new Caca(posx, posy);
+            botaoMapaEsquerda[posx][posy++].setIcon(img1);
+            botaoMapaEsquerda[posx][posy].setIcon(img2);
+        }else{
+            cacaComputador = new Caca(posx, posy);
+            // RETIRAR ESTA PARTE
+            botaoMapaDireita[posx][posy++].setIcon(img1);
+            botaoMapaDireita[posx][posy].setIcon(img2);
+        }
+    }
+    
+    public void adicionarEscoltas(boolean jogador){
+        int posx, posy;
+        int confirmar;
+        Random rand = new Random();
+        posx = rand.nextInt(10);
+        while(true){
+            posy = rand.nextInt(10);
+            confirmar = 0;
+            if( posy < 8 ){
+                if(jogador){
+                    for(int i = 0; i < 4; i = i + 2 ){
+                        if( posx == cacaPlayer.getPosicao(i) && posy == cacaPlayer.getPosicao(i+1) )
+                            confirmar++;
+                        if( posx == cacaPlayer.getPosicao(i) && posy + 1 == cacaPlayer.getPosicao(i+1) )
+                            confirmar++;
+                        if( posx == cacaPlayer.getPosicao(i) && posy + 2 == cacaPlayer.getPosicao(i+1) )
+                            confirmar++;
+                    }
+                }else{
+                    for(int i = 0; i < 4; i = i + 2 ){
+                        if( posx == cacaComputador.getPosicao(i) && posy == cacaComputador.getPosicao(i+1) )
+                            confirmar++;
+                        if( posx == cacaComputador.getPosicao(i) && posy + 1 == cacaComputador.getPosicao(i+1) )
+                            confirmar++;
+                        if( posx == cacaComputador.getPosicao(i) && posy + 2 == cacaComputador.getPosicao(i+1) )
+                            confirmar++;
+                    }
+                }
+                if(confirmar == 0)
+                    break;
+            }
+        }
+        ImageIcon img1 = new ImageIcon("icones/navioescolta1.png");
+        ImageIcon img2 = new ImageIcon("icones/navioescolta2.png");
+        ImageIcon img3 = new ImageIcon("icones/navioescolta3.png");
+        if(jogador){
+            navioescoltaPlayer = new NaviodeEscolta(posx, posy);
+            botaoMapaEsquerda[posx][posy++].setIcon(img1);
+            botaoMapaEsquerda[posx][posy++].setIcon(img2);
+            botaoMapaEsquerda[posx][posy].setIcon(img3);
+        }else{
+            navioescoltaComputador = new NaviodeEscolta(posx, posy);
+            // RETIRAR ESTA PARTE
+            botaoMapaDireita[posx][posy++].setIcon(img1);
+            botaoMapaDireita[posx][posy++].setIcon(img2);
+            botaoMapaDireita[posx][posy].setIcon(img3);
+        }
+    }
+            
+    public void adicionaPortaAvioes(boolean jogador){
+        int posx, posy;
+        int confirmar;
+        Random rand = new Random();
+        while(true){
+            posx = rand.nextInt(10);
+            posy = rand.nextInt(10);
+            confirmar = 0;
+            if( posy < 7 ){
+                if(jogador){
+                    for(int i = 0; i < 4; i = i + 2 ){
+                        if( posx == cacaPlayer.getPosicao(i) && posy == cacaPlayer.getPosicao(i+1) )
+                            confirmar++;
+                        if( posx == cacaPlayer.getPosicao(i) && posy + 1 == cacaPlayer.getPosicao(i+1) )
+                            confirmar++;
+                        if( posx == cacaPlayer.getPosicao(i) && posy + 2 == cacaPlayer.getPosicao(i+1) )
+                            confirmar++;
+                        if( posx == cacaPlayer.getPosicao(i) && posy + 3 == cacaPlayer.getPosicao(i+1) )
+                            confirmar++;
+                    }
+                    for(int i = 0; i < 6; i = i + 2 ){
+                        if( posx == navioescoltaPlayer.getPosicao(i) && posy == navioescoltaPlayer.getPosicao(i+1) )
+                            confirmar++;
+                        if( posx == navioescoltaPlayer.getPosicao(i) && posy + 1 == navioescoltaPlayer.getPosicao(i+1) )
+                            confirmar++;
+                        if( posx == navioescoltaPlayer.getPosicao(i) && posy + 2 == navioescoltaPlayer.getPosicao(i+1) )
+                            confirmar++;
+                        if( posx == navioescoltaPlayer.getPosicao(i) && posy + 3 == navioescoltaPlayer.getPosicao(i+1) )
+                            confirmar++;
+                    }
+                }else{
+                    for(int i = 0; i < 4; i = i + 2 ){
+                        if( posx == cacaComputador.getPosicao(i) && posy == cacaComputador.getPosicao(i+1) )
+                            confirmar++;
+                        if( posx == cacaComputador.getPosicao(i) && posy + 1 == cacaComputador.getPosicao(i+1) )
+                            confirmar++;
+                        if( posx == cacaComputador.getPosicao(i) && posy + 2 == cacaComputador.getPosicao(i+1) )
+                            confirmar++;
+                        if( posx == cacaComputador.getPosicao(i) && posy + 3 == cacaComputador.getPosicao(i+1) )
+                            confirmar++;
+                    }
+                    for(int i = 0; i < 6; i = i + 2 ){
+                        if( posx == navioescoltaComputador.getPosicao(i) && posy == navioescoltaComputador.getPosicao(i+1) )
+                            confirmar++;
+                        if( posx == navioescoltaComputador.getPosicao(i) && posy + 1 == navioescoltaComputador.getPosicao(i+1) )
+                            confirmar++;
+                        if( posx == navioescoltaComputador.getPosicao(i) && posy + 2 == navioescoltaComputador.getPosicao(i+1) )
+                            confirmar++;
+                        if( posx == navioescoltaComputador.getPosicao(i) && posy + 3 == navioescoltaComputador.getPosicao(i+1) )
+                            confirmar++;
+                    }
+                }
+                if(confirmar == 0)
+                    break;
+            }
+        }
+        ImageIcon img1 = new ImageIcon("icones/portaavioes1.png");
+        ImageIcon img2 = new ImageIcon("icones/portaavioes2.png");
+        ImageIcon img3 = new ImageIcon("icones/portaavioes3.png");
+        ImageIcon img4 = new ImageIcon("icones/portaavioes4.png");
+        if(jogador){
+            portaaviaoPlayer = new PortaAviao(posx, posy);
+            botaoMapaEsquerda[posx][posy++].setIcon(img1);
+            botaoMapaEsquerda[posx][posy++].setIcon(img2);
+            botaoMapaEsquerda[posx][posy++].setIcon(img3);
+            botaoMapaEsquerda[posx][posy].setIcon(img4);
+        }else{
+            portaaviaoComputador = new PortaAviao(posx, posy);
+            // RETIRAR ESTA PARTE
+            botaoMapaDireita[posx][posy++].setIcon(img1);
+            botaoMapaDireita[posx][posy++].setIcon(img2);
+            botaoMapaDireita[posx][posy++].setIcon(img3);
+            botaoMapaDireita[posx][posy].setIcon(img4);
+        }
+    }
+    
+    public void adicionaSubmarinos(boolean jogador){
+        int posx, posy;
+        int confirmar;
+        Random rand = new Random();
+        while(true){
+            posx = rand.nextInt(10);
+            posy = rand.nextInt(10);
+            confirmar = 0;
+            if( posy < 9 ){
+                if(jogador){
+                    for(int i = 0; i < 4; i = i + 2 ){
+                        if( posx == cacaPlayer.getPosicao(i) && posy == cacaPlayer.getPosicao(i+1) )
+                            confirmar++;
+                        if( posx == cacaPlayer.getPosicao(i) && posy + 1 == cacaPlayer.getPosicao(i+1) )
+                            confirmar++;
+                    }
+                    for(int i = 0; i < 6; i = i + 2 ){
+                        if( posx == navioescoltaPlayer.getPosicao(i) && posy == navioescoltaPlayer.getPosicao(i+1) )
+                            confirmar++;
+                        if( posx == navioescoltaPlayer.getPosicao(i) && posy + 1 == navioescoltaPlayer.getPosicao(i+1) )
+                            confirmar++;
+                    }
+                    for(int i = 0; i < 8; i = i + 2 ){
+                        if( posx == portaaviaoPlayer.getPosicao(i) && posy == portaaviaoPlayer.getPosicao(i+1) )
+                            confirmar++;
+                        if( posx == portaaviaoPlayer.getPosicao(i) && posy + 1 == portaaviaoPlayer.getPosicao(i+1) )
+                            confirmar++;
+                    }
+                }else{
+                    for(int i = 0; i < 4; i = i + 2 ){
+                        if( posx == cacaComputador.getPosicao(i) && posy == cacaComputador.getPosicao(i+1) )
+                            confirmar++;
+                        if( posx == cacaComputador.getPosicao(i) && posy + 1 == cacaComputador.getPosicao(i+1) )
+                            confirmar++;
+                    }
+                    for(int i = 0; i < 6; i = i + 2 ){
+                        if( posx == navioescoltaComputador.getPosicao(i) && posy == navioescoltaComputador.getPosicao(i+1) )
+                            confirmar++;
+                        if( posx == navioescoltaComputador.getPosicao(i) && posy + 1 == navioescoltaComputador.getPosicao(i+1) )
+                            confirmar++;
+                    }
+                    for(int i = 0; i < 8; i = i + 2 ){
+                        if( posx == portaaviaoComputador.getPosicao(i) && posy == portaaviaoComputador.getPosicao(i+1) )
+                            confirmar++;
+                        if( posx == portaaviaoComputador.getPosicao(i) && posy + 1 == portaaviaoComputador.getPosicao(i+1) )
+                            confirmar++;
+                    }
+                }
+                if(confirmar == 0)
+                    break;
+            }
+        }
+        ImageIcon img1 = new ImageIcon("icones/submarino1.png");
+        ImageIcon img2 = new ImageIcon("icones/submarino2.png");
+        if(jogador){
+            submarinoPlayer = new Submarino(posx, posy);
+            botaoMapaEsquerda[posx][posy++].setIcon(img1);
+            botaoMapaEsquerda[posx][posy].setIcon(img2);
+        }else{
+            submarinoComputador = new Submarino(posx, posy);
+            // RETIRAR ESTA PARTE
+            botaoMapaDireita[posx][posy++].setIcon(img1);
+            botaoMapaDireita[posx][posy].setIcon(img2);
+        }
+    }
+    
+    public static void main(String[] args) {
         menuPrincipal guiMenu = new menuPrincipal();
         guiMenu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
+        
     }
 }
