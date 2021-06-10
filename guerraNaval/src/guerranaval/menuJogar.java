@@ -83,8 +83,6 @@ public class menuJogar extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         nomeJogador = nome.getText();
-        System.out.println(nomeJogador + " ");
-        
         String comando = e.getActionCommand();
         if( "menu".equals(comando) ){
             menuPrincipal telaprincipal = new menuPrincipal();
