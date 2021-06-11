@@ -12,10 +12,11 @@ import javax.swing.*;
 
 public class menuPrincipal extends JFrame implements ActionListener{
     
-    Container telamenu = getContentPane();
+    private Container telamenu;
     
     public menuPrincipal(){
         super("Guerra Naval");
+        this.telamenu = getContentPane();
         
         JPanel painelBotoesMenu = new JPanel();
         JPanel painelCima = new JPanel();

@@ -13,13 +13,14 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 public class menuJogar extends JFrame implements ActionListener{
-    public Container tela = getContentPane();
-    public JTextField nome;
-    public JButton jogoAleatorio, definirJogo, menu, sair;
-    public JPanel []painelaux1 = new JPanel[2];
-    public JLabel mensagem;
+    private Container tela = getContentPane();
+    private JTextField nome;
+    private JButton jogoAleatorio, definirJogo, menu, sair;
+    private JRadioButton [] niveis = new JRadioButton[3];
+    private JPanel []painelaux1 = new JPanel[2];
+    private JLabel mensagem;
     private String nomeJogador;
-    private int opcaoJogo;
+    private int dificuldade;
         
     public menuJogar(){
         super("Guerra Naval");
@@ -27,7 +28,7 @@ public class menuJogar extends JFrame implements ActionListener{
         
         paineis();
                
-        setSize(400, 200);
+        setSize(400, 215);
         setVisible(true);
         setLocationRelativeTo(null);
     }
@@ -50,9 +51,27 @@ public class menuJogar extends JFrame implements ActionListener{
         paineis[0].add(painelaux1[0]);
         paineis[0].add(painelaux1[1]);
         //
+        JPanel painelmeio = new JPanel(new FlowLayout(1, 10, 10));
+        JPanel baixo = new JPanel(new FlowLayout(1, 10, 7));
+        
+        niveis[0] = new JRadioButton("Fácil");
+        niveis[0].setSelected(true);
+        niveis[0].setActionCommand("facil");
+        niveis[0].addActionListener(this);
+        this.dificuldade = 1;
+        niveis[1] = new JRadioButton("Médio");
+        niveis[1].setActionCommand("medio");
+        niveis[1].addActionListener(this);
+        niveis[2] = new JRadioButton("Difícil");
+        niveis[2].setActionCommand("dificil");
+        niveis[2].addActionListener(this);
+        
+        painelmeio.add(niveis[0]);
+        painelmeio.add(niveis[1]);
+        painelmeio.add(niveis[2]);
         
         // ADD BOTOES
-        paineis[1] = new JPanel(new FlowLayout(1,5,25));
+        paineis[1] = new JPanel(new GridLayout(2,0));
         jogoAleatorio = new JButton("Jogo Aleatorio");
         jogoAleatorio.setBackground(Color.white);
         jogoAleatorio.setActionCommand("jogoaleatorio");
@@ -70,10 +89,12 @@ public class menuJogar extends JFrame implements ActionListener{
         sair.setActionCommand("sair");
         sair.addActionListener(this);
         
-        paineis[1].add(jogoAleatorio);
-        paineis[1].add(definirJogo);
-        paineis[1].add(menu);
-        paineis[1].add(sair);
+        baixo.add(jogoAleatorio);
+        baixo.add(definirJogo);
+        baixo.add(menu);
+        baixo.add(sair);
+        paineis[1].add(painelmeio);
+        paineis[1].add(baixo);
         //
        
         tela.add(paineis[0]);
@@ -84,6 +105,25 @@ public class menuJogar extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         nomeJogador = nome.getText();
         String comando = e.getActionCommand();
+        if( "facil".equals(comando) || "medio".equals(comando) || "dificil".equals(comando) ){
+            if("facil".equals(comando)){
+                niveis[0].setSelected(true);
+                niveis[1].setSelected(false);
+                niveis[2].setSelected(false);
+                this.dificuldade = 1;
+            }else if("medio".equals(comando)){
+                niveis[0].setSelected(false);
+                niveis[1].setSelected(true);
+                niveis[2].setSelected(false);
+                this.dificuldade = 2;
+            }else{
+                niveis[0].setSelected(false);
+                niveis[1].setSelected(false);
+                niveis[2].setSelected(true);
+                this.dificuldade = 3;
+            }
+            return;
+        }
         if( "menu".equals(comando) ){
             menuPrincipal telaprincipal = new menuPrincipal();
             telaprincipal.setVisible(true);
@@ -101,7 +141,7 @@ public class menuJogar extends JFrame implements ActionListener{
                         nome.setBorder(new LineBorder(Color.RED, 3));
                         Cronometro medidor = new Cronometro(2);
                     }else{
-                        GuerraNaval telaprincipal = new GuerraNaval(0, nomeJogador);
+                        GuerraNaval telaprincipal = new GuerraNaval(0, nomeJogador, dificuldade);
                         telaprincipal.setVisible(true);
                         telaprincipal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
                         tela.setVisible(false);
@@ -115,7 +155,7 @@ public class menuJogar extends JFrame implements ActionListener{
                         nome.setBorder(new LineBorder(Color.RED, 3));
                         Cronometro medidor = new Cronometro(2);
                     }else{
-                        GuerraNaval telaprincipal = new GuerraNaval(1, nomeJogador);
+                        GuerraNaval telaprincipal = new GuerraNaval(1, nomeJogador, dificuldade);
                         telaprincipal.setVisible(true);
                         telaprincipal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
                         tela.setVisible(false);

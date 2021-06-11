@@ -5,11 +5,14 @@
  */
 package guerranaval;
 
+import Ranking.Empacotamento;
+import Ranking.Ranking;
 import java.awt.event.*;
 import java.awt.*;
 import javax.swing.*;
 import java.util.Random;
 import java.util.ArrayList;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -23,13 +26,15 @@ import veiculos.Submarino;
 public final class GuerraNaval extends JFrame implements ActionListener{
     //BOTÕES PRINCIPAIS
     private JButton sair, dica, disparoUnico, cascataHorizontal, cascataVertical, tiroEstrela;
-    private JPanel painelBotoesCima, painelMapas, painelEsquerda, painelDireita, painelMapaEsquerda, painelMapaDireita, painelcima;
+    private JPanel painelBotoesCima, painelMapas, painelEsquerda, painelDireita, painelMapaEsquerda, painelMapaDireita, painelcima, painelcimaDir;
     private Container tela;
+    private JLabel painelCronometro;
     //BOTÕES MAPA
+    private boolean primeiraJogada;
     private final JButton[][] botaoMapaEsquerda = new JButton[10][10]; 
     private final JButton[][] botaoMapaDireita = new JButton[10][10]; 
     private JButton aviao, porta, navio, sub;
-    //VARIAVEIS
+    private boolean cronometro;
     private String tipoDisparo = "disparounico";
     private String auxiliar;
     private final String nomeJogador;
@@ -43,6 +48,9 @@ public final class GuerraNaval extends JFrame implements ActionListener{
     private int marcarAtaque;
     private int quantDicas;
     private ArrayList <String> comandos = new ArrayList<>();
+    private double time;
+    private int dificuldade;
+    private int contDica;
     // VEICULOS
     private Caca cacaPlayer, cacaComputador;
     private NaviodeEscolta navioescoltaPlayer, navioescoltaComputador;
@@ -50,8 +58,12 @@ public final class GuerraNaval extends JFrame implements ActionListener{
     private Submarino submarinoPlayer, submarinoComputador;
     
     
-    public GuerraNaval(int tipoJogo, String nomeJogador){
+    public GuerraNaval(int tipoJogo, String nomeJogador, int dificuldade){
         super("Guerra Naval");
+        this.contDica = 0;
+        this.dificuldade = dificuldade;
+        this.primeiraJogada = false;
+        this.cronometro = true;
         this.quantDicas = 3;
         this.marcarAtaque = 0;
         this.quantidadeVeiculosPlayer = 4;
@@ -166,7 +178,7 @@ public final class GuerraNaval extends JFrame implements ActionListener{
     public void criarMapaDireita(){
         /// -- ESTAO FUNÇÃO SERVE PARA DEFINIR O ESPAÇO DO BORDERLAYOUT.CENTER
         /// ONDE ESTARÁ LOCALIZADO O MAPAS DA DIREITA.
-        JPanel auxiliar, painelbaixo, auxiliar1, paineldireita, auxiliar2, painelesquerda, auxiliar3, painelcimaDir;
+        JPanel auxiliar, painelbaixo, auxiliar1, paineldireita, auxiliar2, painelesquerda;
         auxiliar = new JPanel();
         JLabel player = new JLabel("                                                        Computador");
         painelbaixo = new JPanel();
@@ -188,9 +200,18 @@ public final class GuerraNaval extends JFrame implements ActionListener{
         painelDireita.add(painelesquerda, BorderLayout.WEST);
         ////
         painelcimaDir = new JPanel();
-        auxiliar3 = new JPanel();
-        painelcimaDir.setLayout(new GridLayout(6, 0));
-        painelcimaDir.add(auxiliar3);        
+        String dif;
+        if(dificuldade == 1)
+            dif = "Fácil";
+        else if(dificuldade == 2)
+            dif = "Médio";
+        else
+            dif = "Difícil";
+        JLabel diff = new JLabel("Dificuldade: "+dif);
+        painelCronometro = new JLabel("");
+        painelcimaDir.setLayout(new FlowLayout(1, 30, 22));
+        painelcimaDir.add(diff);     
+        painelcimaDir.add(painelCronometro);
         painelDireita.add(painelcimaDir, BorderLayout.NORTH);
         /// PAINEL ONDE SERA ADICIONADO OS BOTÕES DO MAPA
         painelMapaDireita = new JPanel();
@@ -311,7 +332,12 @@ public final class GuerraNaval extends JFrame implements ActionListener{
             //-------------------------------
             switch (comando) {
                 case "P.sair":
-                    System.exit(0);
+                    menuSair telaprincipal = new menuSair(tipoJogo, nomeJogador, dificuldade);
+                    telaprincipal.setVisible(true);
+                    telaprincipal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
+                    this.tela.setVisible(false);
+                    this.dispose();
+                    break;
                 case "P.dica":
                     this.auxiliar = this.tipoDisparo;
                     dica.setBackground(Color.DARK_GRAY);
@@ -344,6 +370,11 @@ public final class GuerraNaval extends JFrame implements ActionListener{
             }
         }
         else if( comando.matches("-?\\d+") ){
+            if(!primeiraJogada){
+                Cronometro crono = new Cronometro();
+                primeiraJogada = true;
+            }
+            
             int posicao, contadorx = 0, contadory = 0, limite = 9;
             posicao = Integer.parseInt(comando);
             for(int i = 0; i < posicao; i++ ){
@@ -406,6 +437,7 @@ public final class GuerraNaval extends JFrame implements ActionListener{
                 }
         }
         if(this.quantidadeVeiculosComp == 0){
+            this.cronometro = false;
             JOptionPane.showMessageDialog(null, "O Jogador ganhou!!", "Vencedor", JOptionPane.WARNING_MESSAGE);
             fimdeJogo(1);
         }
@@ -681,28 +713,32 @@ public final class GuerraNaval extends JFrame implements ActionListener{
         int posx, posy;
         Random rand = new Random();
         while(true){
-            posx = rand.nextInt(10);
-            posy = rand.nextInt(10);
+            if(dificuldade == 3 && rand.nextInt(100) + 1 >= 85 ){
+                posx = coordenadaPlayer.get(0);
+                posy = coordenadaPlayer.get(1);
+            }else{
+               posx = rand.nextInt(10);
+               posy = rand.nextInt(10); 
+            }
             if("S".equals(botaoMapaEsquerda[posx][posy].getActionCommand())){
                 break;
             }
         }
-        verificaDanoVeiculosPlayer();
-        if(marcarAtaque == 1){
-            posx = cacaPlayer.getPosicao(0);
-            posy = cacaPlayer.getPosicao(1);
-        }
-        if(marcarAtaque == 2){
-            posx = portaaviaoPlayer.getPosicao(0);
-            posy = portaaviaoPlayer.getPosicao(1);
-        }
-        if(marcarAtaque == 3){
-            posx = navioescoltaPlayer.getPosicao(0);
-            posy = navioescoltaPlayer.getPosicao(1);
-        }
-        if(marcarAtaque == 4){
-            posx = submarinoPlayer.getPosicao(0);
-            posy = submarinoPlayer.getPosicao(1);
+        if( dificuldade != 1 ){
+            verificaDanoVeiculosPlayer();
+            if(marcarAtaque == 1){
+                posx = cacaPlayer.getPosicao(0);
+                posy = cacaPlayer.getPosicao(1);
+            }else if(marcarAtaque == 2){
+                posx = portaaviaoPlayer.getPosicao(0);
+                posy = portaaviaoPlayer.getPosicao(1);
+            }else if(marcarAtaque == 3){
+                posx = navioescoltaPlayer.getPosicao(0);
+                posy = navioescoltaPlayer.getPosicao(1);
+            }else if(marcarAtaque == 4){
+                posx = submarinoPlayer.getPosicao(0);
+                posy = submarinoPlayer.getPosicao(1);
+            }
         }
         if(cacaComputador.isStatus()){
             botaoMapaEsquerda[posx][posy].setBackground(Color.DARK_GRAY);
@@ -758,6 +794,7 @@ public final class GuerraNaval extends JFrame implements ActionListener{
             verificaDisparadoComp(posx, posy);
         }
         if(this.quantidadeVeiculosPlayer == 0){
+            this.cronometro = false;
             JOptionPane.showMessageDialog(null, "O Computador ganhou!!", "Vencedor", JOptionPane.WARNING_MESSAGE);
             fimdeJogo(0);
         }
@@ -937,6 +974,18 @@ public final class GuerraNaval extends JFrame implements ActionListener{
                 comandos.remove(0);
             }
         }
+    }
+    
+    public void salvarVencedor(){
+        TreeMap<Double, String> player;
+        player = Empacotamento.load("ranking.dat");
+                
+        Ranking.listOfPlayers(player);
+        Empacotamento.save(player, "ranking.dat");
+        
+        player = Empacotamento.load("ranking.dat");
+        
+        Ranking.printPlayers(player);  
     }
     
     // --------- POEM VEICULOS EM CAMPO NA PRIMEIRA ITERAÇÃO
@@ -1203,8 +1252,9 @@ public final class GuerraNaval extends JFrame implements ActionListener{
         
     }
     
-    class AnimacaoDica extends Thread{
+    public class AnimacaoDica extends Thread{
         
+        private boolean modo;
         private int tempo;
         private int posx;
         private int posy;
@@ -1221,6 +1271,7 @@ public final class GuerraNaval extends JFrame implements ActionListener{
         private Color cor;
         
         public AnimacaoDica(int x, int y){
+            this.modo = modo;
             this.speed = 60;
             this.tempo = 0;
             this.posx = x;
@@ -1242,6 +1293,21 @@ public final class GuerraNaval extends JFrame implements ActionListener{
                     botaoMapaDireita[i][j].setActionCommand("");
                 }
             }
+            desabilitaBotoes();
+        }
+        
+        public void desabilitaBotoes(){
+            disparoUnico.setEnabled(false);
+            cascataVertical.setEnabled(false);
+            cascataHorizontal.setEnabled(false);
+            tiroEstrela.setEnabled(false);
+        }
+        
+        public void habilitaBotoes(){
+            disparoUnico.setEnabled(true);
+            cascataVertical.setEnabled(true);
+            cascataHorizontal.setEnabled(true);
+            tiroEstrela.setEnabled(true);
         }
         
         public void verificarDica(int x, int y){
@@ -1368,6 +1434,47 @@ public final class GuerraNaval extends JFrame implements ActionListener{
                 tiroEstrela.setBackground(Color.DARK_GRAY);
                 tiroEstrela.setForeground(Color.WHITE);
                 tipoDisparo = "tiroestrela";
+            }
+            habilitaBotoes();
+            contDica++;
+            if(contDica == 3)
+                dica.setEnabled(false);
+        }
+    }
+    
+    public class Cronometro extends Thread{
+        
+        private int seg;
+        private int mm;
+        private int mm2;
+        
+        public Cronometro(){
+            this.seg = 0;
+            this.mm = 0;
+            this.mm2 = 0;
+            start();
+        }
+        
+        @Override
+        public void run(){
+            painelCronometro.setText("[ " + seg + " : " + mm + "" + mm2 + " ]");
+            while(cronometro){
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(GuerraNaval.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                time = time + 0.01;
+                this.mm2++;
+                if( this.mm2 == 10){
+                    this.mm2 = 0;
+                    this.mm++;
+                    if(this.mm == 10){
+                        this.seg++;
+                        this.mm = 0;
+                    }
+                }
+                painelCronometro.setText("[ " + seg + " : " + mm + "" + mm2 + " ]");
             }
         }
     }

@@ -2,8 +2,6 @@ package veiculos;
 
 import java.util.ArrayList;
 
-import excessoes.PosicaoInexistente;
-
 public abstract class Veiculo {
     private final int tam;
     private int vida;
@@ -38,9 +36,6 @@ public abstract class Veiculo {
     }
 
     public Integer getPosicao(int posicao) {
-        if ((posicao < 0) || (posicao > this.coordenada.size())) 
-            throw new PosicaoInexistente("[Essa possicao nao existe]");
-
         return this.coordenada.get(posicao);
     }
 
