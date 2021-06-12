@@ -1304,10 +1304,14 @@ public final class GuerraNaval extends JFrame implements ActionListener{
         }
         
         public void habilitaBotoes(){
-            disparoUnico.setEnabled(true);
-            cascataVertical.setEnabled(true);
-            cascataHorizontal.setEnabled(true);
-            tiroEstrela.setEnabled(true);
+            if(portaaviaoPlayer.isStatus() || submarinoPlayer.isStatus())
+                disparoUnico.setEnabled(true);
+            if(navioescoltaPlayer.isStatus())
+                cascataVertical.setEnabled(true);
+            if(navioescoltaPlayer.isStatus())
+                cascataHorizontal.setEnabled(true);
+            if(cacaPlayer.isStatus())
+                tiroEstrela.setEnabled(true);
         }
         
         public void verificarDica(int x, int y){
