@@ -135,7 +135,7 @@ public class menuJogar extends JFrame implements ActionListener{
                 System.exit(0);
             else{
                 if( "jogoaleatorio".equals(comando) ){
-                    if( "".equals(nomeJogador) ){
+                    if( "".equals(nomeJogador) || nomeJogador.contains("$")){
                         mensagem.setText("                                                  Ensira um nome!");
                         mensagem.setForeground(Color.red);
                         nome.setBorder(new LineBorder(Color.RED, 3));
@@ -149,7 +149,7 @@ public class menuJogar extends JFrame implements ActionListener{
                     }
                     
                 }else{
-                    if( "".equals(nomeJogador) ){
+                    if( "".equals(nomeJogador) || nomeJogador.contains("$")){
                         mensagem.setText("                                                  Ensira um nome!");
                         mensagem.setForeground(Color.red);
                         nome.setBorder(new LineBorder(Color.RED, 3));

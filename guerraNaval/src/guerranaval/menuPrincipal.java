@@ -63,17 +63,20 @@ public class menuPrincipal extends JFrame implements ActionListener{
         String comando = e.getActionCommand();
         
         if( "jogar".equals(comando) ){
-            //GuerraNaval telaprincipal = new GuerraNaval(1, "rafael");
             menuJogar telaprincipal = new menuJogar();
             telaprincipal.setVisible(true);
             telaprincipal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
             telamenu.setVisible(false);
             this.dispose();
         }
-        else{
-            if( "sair".equals(comando) ){
+        else if( "sair".equals(comando) ){
                 System.exit(0);
-            }
+        }else{
+            menuRanking rank = new menuRanking();
+            rank.setVisible(true);
+            rank.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
+            telamenu.setVisible(false);
+            this.dispose();
         }
     }
     

@@ -5,8 +5,6 @@
  */
 package guerranaval;
 
-import Ranking.Empacotamento;
-import Ranking.Ranking;
 import java.awt.event.*;
 import java.awt.*;
 import javax.swing.*;
@@ -16,6 +14,9 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+
+import Ranking.Empacotamento;
+import Ranking.Ranking;
 
 import veiculos.Caca;
 import veiculos.NaviodeEscolta;
@@ -51,6 +52,7 @@ public final class GuerraNaval extends JFrame implements ActionListener{
     private double time;
     private int dificuldade;
     private int contDica;
+    private String dif;
     // VEICULOS
     private Caca cacaPlayer, cacaComputador;
     private NaviodeEscolta navioescoltaPlayer, navioescoltaComputador;
@@ -200,7 +202,6 @@ public final class GuerraNaval extends JFrame implements ActionListener{
         painelDireita.add(painelesquerda, BorderLayout.WEST);
         ////
         painelcimaDir = new JPanel();
-        String dif;
         if(dificuldade == 1)
             dif = "Fácil";
         else if(dificuldade == 2)
@@ -438,6 +439,7 @@ public final class GuerraNaval extends JFrame implements ActionListener{
         }
         if(this.quantidadeVeiculosComp == 0){
             this.cronometro = false;
+            salvarVencedor();
             JOptionPane.showMessageDialog(null, "O Jogador ganhou!!", "Vencedor", JOptionPane.WARNING_MESSAGE);
             fimdeJogo(1);
         }
@@ -979,13 +981,11 @@ public final class GuerraNaval extends JFrame implements ActionListener{
     public void salvarVencedor(){
         TreeMap<Double, String> player;
         player = Empacotamento.load("ranking.dat");
-                
+             
+        Ranking.addPlayer(time, nomeJogador+"$"+dif, player);
+        
         Ranking.listOfPlayers(player);
         Empacotamento.save(player, "ranking.dat");
-        
-        player = Empacotamento.load("ranking.dat");
-        
-        Ranking.printPlayers(player);  
     }
     
     // --------- POEM VEICULOS EM CAMPO NA PRIMEIRA ITERAÇÃO
